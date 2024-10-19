@@ -1,0 +1,47 @@
+Description: Udacity - Design for Availability, Resilience, and Reliability - Generate instances for Secondary
+
+Resources:
+  MySQLInstanceReplica:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: mysql
+      DBInstanceIdentifier: "udacity-mysql-read-replica"
+      SourceDBInstanceIdentifier: "arn:aws:rds:us-east-1:903291103302:db:udacity-mysql"
+      DBName: udacity
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      DBSubnetGroupName: !ImportValue RDSSubnetGroup
+      VPCSecurityGroups:
+        - !ImportValue DatabaseSecurityGroup
+
+  EC2KeyPairSecondary:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: "uda-ec2-keypair-secondary"
+      KeyType: rsa
+
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: !Ref EC2KeyPairSecondary
+      ImageId: ami-07c5ecd8498c59db5
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !ImportValue PublicSubnet1
+          GroupSet:
+            - !ImportValue ApplicationSecurityGroup
+
+Outputs:
+  SecondaryMySQLInstanceReplicaIdentifier:
+    Description: "Secondary MySQL Instance Replica Identifier"
+    Value: !Ref MySQLInstanceReplica
+
+  EC2KeyPairPrimary:
+    Description: "EC2 Keypair Secondary"
+    Value: !Ref EC2KeyPairSecondary
+
+  EC2InstanceId:
+    Description: "EC2 Instance ID"
+    Value: !Ref MyEC2Instance

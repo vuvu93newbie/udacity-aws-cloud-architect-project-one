@@ -1,0 +1,49 @@
+Description: Udacity - Design for Availability, Resilience, and Reliability - Generate instances for Primary
+
+Resources:
+  MySQLInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: mysql
+      DBInstanceIdentifier: udacity-mysql
+      DBName: udacity
+      MasterUsername: vutnm
+      MasterUserPassword: Password
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      DBSubnetGroupName: !ImportValue RDSSubnetGroup
+      VPCSecurityGroups:
+        - !ImportValue DatabaseSecurityGroup
+      MultiAZ: true
+
+  EC2KeyPairPrimary:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: "uda-ec2-keypair-primary"
+      KeyType: rsa
+
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: !Ref EC2KeyPairPrimary
+      ImageId: ami-06b21ccaeff8cd686
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !ImportValue PublicSubnet1
+          GroupSet:
+            - !ImportValue ApplicationSecurityGroup
+
+Outputs:
+  PrimaryMySQLInstanceIdentifier:
+    Description: "Primary MySQL Instance Identifier"
+    Value: !Ref MySQLInstance
+
+  EC2KeyPairPrimary:
+    Description: "EC2 Keypair Primary"
+    Value: !Ref EC2KeyPairPrimary
+
+  EC2InstanceId:
+    Description: "EC2 Instance ID"
+    Value: !Ref MyEC2Instance

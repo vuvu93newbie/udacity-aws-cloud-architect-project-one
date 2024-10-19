@@ -1,0 +1,52 @@
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+Last login: Sat Oct 19 08:18:53 2024 from 18.237.140.165
+[ec2-user@ip-10-2-10-151 ~]$ mysql
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2)
+[ec2-user@ip-10-2-10-151 ~]$ mysql -h udacity-mysql-read-replica.cn31f0dzgtxm.us-west-2.rds.amazonaws.com -P 3306 -u vutnm -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.39 Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use udacity
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [udacity]> select * from UdaTable
+    -> ;
++----+-------------+
+| Id | Name        |
++----+-------------+
+|  1 | Hello world |
++----+-------------+
+1 row in set (0.001 sec)
+
+MySQL [udacity]> insert into UdaTable (Id, Name) values (2, "Hi Hi")
+    -> ;
+Query OK, 1 row affected (0.005 sec)
+
+MySQL [udacity]> select * from UdaTable
+    -> ;
++----+-------------+
+| Id | Name        |
++----+-------------+
+|  1 | Hello world |
+|  2 | Hi Hi       |
++----+-------------+
+2 rows in set (0.001 sec)
+
+MySQL [udacity]> 
